@@ -125,3 +125,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'applicationLITRevu.CustomUser'
+
+LOGIN_REDIRECT_URL = 'add_ticket'

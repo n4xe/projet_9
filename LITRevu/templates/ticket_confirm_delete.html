@@ -1,0 +1,10 @@
+<!-- ticket_confirm_delete.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete "{{ ticket.title }}"?</p>
+    <button type="submit">Yes, delete it</button>
+</form>
+{% endblock %}

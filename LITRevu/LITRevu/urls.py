@@ -18,10 +18,13 @@ Including another URLconf
 from django.urls import path, include
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
-from applicationLITRevu.views import signup_view
+from applicationLITRevu.views import signup_view, add_ticket, edit_ticket, delete_ticket
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', LoginView.as_view(template_name='login.html'), name='login'),
     path('signup/', signup_view, name='signup'),
+    path('tickets/add/', add_ticket, name='add_ticket'),
+    path('tickets/edit/<int:ticket_id>/', edit_ticket, name='edit_ticket'),
+    path('tickets/delete/<int:ticket_id>/', delete_ticket, name='delete_ticket'),
 ]
