@@ -18,7 +18,7 @@ Including another URLconf
 from django.urls import path, include
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
-from applicationLITRevu.views import signup_view, add_ticket, edit_ticket, delete_ticket
+from applicationLITRevu.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +27,10 @@ urlpatterns = [
     path('tickets/add/', add_ticket, name='add_ticket'),
     path('tickets/edit/<int:ticket_id>/', edit_ticket, name='edit_ticket'),
     path('tickets/delete/<int:ticket_id>/', delete_ticket, name='delete_ticket'),
+    path('tickets/<int:ticket_id>/reviews/add/', add_review, name='add_review'),
+    path('reviews/<int:review_id>/edit/', edit_review, name='edit_review'),
+    path('reviews/<int:review_id>/delete/', delete_review, name='delete_review'),
+    path('users/follows/', user_follows, name='user_follows'),
+    path('users/follow/', follow_user, name='follow_user'),
+    path('users/unfollow/<int:user_id>/', unfollow_user, name='unfollow_user'),
 ]

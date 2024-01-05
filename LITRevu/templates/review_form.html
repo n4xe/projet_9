@@ -1,0 +1,13 @@
+<!-- review_form.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <h1>Créer une critique pour {{ ticket.title }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Review</button>
+    </form>
+</div>
+{% endblock %}

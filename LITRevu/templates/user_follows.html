@@ -1,0 +1,5 @@
+<!-- user_follows.html -->
+{% for follow in follows %}
+    <p>{{ follow.followed_user.username }}</p>
+    <!-- Ajoutez un bouton ou un lien pour se désabonner -->
+{% endfor %}

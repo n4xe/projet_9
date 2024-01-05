@@ -16,12 +16,17 @@ class Ticket(models.Model):
 
 
 class Review(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
-    rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
+    ticket = models.ForeignKey('Ticket', on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     headline = models.CharField(max_length=128)
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
     body = models.TextField(max_length=8192, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review by {self.user.username} on {self.ticket.title}"
 
 
 class UserFollows(models.Model):
