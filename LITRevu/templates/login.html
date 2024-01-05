@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Page d'accueil{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <div class="signup-section">
+        <h2>Inscrivez-vous maintenant</h2>
+        <form action="{% url 'signup' %}">
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
+    <div class="login-section">
+        <h2>Connectez-vous</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+<style>
+.home-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: start;
+    padding: 20px;
+}
+.signup-section, .login-section {
+    border: 1px solid #000;
+    padding: 20px;
+    width: 45%;
+}
+.signup-section h2, .login-section h2 {
+    text-align: center;
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
+button {
+    margin: 10px auto;
+    padding: 5px 15px;
+}
+</style>
+{% endblock %}

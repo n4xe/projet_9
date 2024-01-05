@@ -1,0 +1,78 @@
+<!-- signup.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="signup-container">
+    <h1>Formulaire d'inscription</h1>
+    <form method="post" id="signupForm">
+        {% csrf_token %}
+        <div class="form-field">
+            <label for="id_username">Nom d'utilisateur</label>
+            <input type="text" name="username" id="id_username" required>
+        </div>
+        <div class="form-field">
+            <label for="id_password1">Mot de passe</label>
+            <input type="password" name="password1" id="id_password1" required>
+        </div>
+        <div class="form-field">
+            <label for="id_password2">Confirmer mot de passe</label>
+            <input type="password" name="password2" id="id_password2" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit">S'inscrire</button>
+            <a href="{% url 'login' %}">Retourner</a>
+        </div>
+    </form>
+    {% if errors %}
+        <ul class="errors">
+        {% for field, error_list in errors.items %}
+            <li>{{ field }}: {{ error_list.as_text }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .signup-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #000; /* Assurez-vous que le contraste est suffisant */
+    }
+    .signup-container h1 {
+        text-align: center;
+    }
+    .form-field {
+        margin-bottom: 10px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #000; /* Assurez-vous que le contraste est suffisant */
+    }
+    .form-actions {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .form-actions a {
+        margin-left: 10px;
+        color: #000; /* Assurez-vous que le contraste est suffisant */
+        text-decoration: none;
+    }
+    /* Ajoutez des styles supplémentaires pour le bouton si nécessaire */
+</style>
+{% endblock %}
