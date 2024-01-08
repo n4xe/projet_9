@@ -3,6 +3,15 @@
 
 {% block content %}
 <div>
+    {% if ticket %}
+      <div class="ticket-display">
+        <h2>Répondre au ticket de {{ ticket.user.username }}</h2>
+        <p>{{ ticket.description }}</p>
+        {% if ticket.image %}
+          <img src="{{ ticket.image.url }}" alt="{{ ticket.title }}" style="max-width: 100%; height: auto;"/>
+        {% endif %}
+      </div>
+    {% endif %}
     <h1>Créer une critique pour {{ ticket.title }}</h1>
     <form method="post">
         {% csrf_token %}

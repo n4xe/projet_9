@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="feed-container">
+    <h1>Vos posts</h1>
+
+    {% for ticket in user_tickets %}
+    <div class="item-frame ticket">
+        <!-- Contenu du ticket -->
+        <h2>{{ ticket.title }}</h2>
+        <img src="{{ ticket.image.url }}" alt="Image pour {{ ticket.title }}" />
+        <!-- Boutons pour modifier et supprimer -->
+        <a href="{% url 'edit_ticket' ticket.id %}" class="button">Modifier</a>
+        <a href="{% url 'delete_ticket' ticket.id %}" class="button">Supprimer</a>
+    </div>
+    {% endfor %}
+
+    {% for review in user_reviews %}
+    <div class="item-frame review">
+        <!-- Contenu de la critique -->
+        <h3>{{ review.headline }}</h3>
+        <p>{{ review.body }}</p>
+        <!-- Boutons pour modifier et supprimer -->
+        <a href="{% url 'edit_review' review.id %}" class="button">Modifier</a>
+        <a href="{% url 'delete_review' review.id %}" class="button">Supprimer</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

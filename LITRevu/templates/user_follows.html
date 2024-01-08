@@ -1,5 +1,39 @@
 <!-- user_follows.html -->
-{% for follow in follows %}
-    <p>{{ follow.followed_user.username }}</p>
-    <!-- Ajoutez un bouton ou un lien pour se désabonner -->
-{% endfor %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="feed-container">
+     <div class="ticket-form-container">
+        <!-- Formulaire pour suivre un nouvel utilisateur -->
+        <h2>Ajouter un utilisateur</h2>
+            <form method="post" action="{% url 'user_follows' %}" class="ticket-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Suivre</button>
+            </form>
+    </div>
+
+    <div class="follow-section">
+        <h2>Abonnements</h2>
+        <!-- Liste des utilisateurs suivis -->
+        {% for follow in follows %}
+            <div class="ticket">
+                <p>{{ follow.followed_user.username }}</p>
+                <!-- Lien pour se désabonner -->
+                <a href="{% url 'unfollow_user' follow.followed_user.id %}" class="btn">Désabonner</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="follow-section">
+        <h2>Abonnés</h2>
+        <!-- Liste des abonnés -->
+        {% for follower in followers %}
+            <div class="ticket">
+                <p>{{ follower.user.username }}</p>
+                <!-- Optionnellement, ajoutez des actions comme message ou désabonner -->
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+
+
+{% block content %}
+<div class="feed-container">
+    <!-- Ajout des boutons au haut de la page -->
+    <div class="feed-buttons">
+        <a href="{% url 'add_ticket' %}" class="button">Demander une critique</a>
+        <a href="{% url 'create_review' %}" class="button">Créer une critique</a>
+    </div>
+
+    {% for item in feed_items %}
+    <div class="item-frame {% if item.get_model_name == 'Ticket' %}ticket{% elif item.get_model_name == 'Review' %}review{% endif %}">
+        <div class="item-header">
+            <span class="created-info">
+                Créé par <strong>{{ item.user.username }}</strong>
+            </span>
+            <span class="created-date">
+                {{ item.time_created|date:"d M Y à H:i" }}
+            </span>
+        </div>
+        {% if item.get_model_name == 'Ticket' %}
+            <!-- Contenu pour ticket -->
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.description }}</p>
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="Image pour {{ item.title }}" />
+            {% else %}
+            <p>Pas d'image disponible.</p>
+            {% endif %}
+            {% if not item.has_review %}
+            <!-- Le bouton est dans la boucle for et à l'intérieur de la condition du ticket -->
+                <div class="add-review-container">
+                    <a href="{% url 'add_review' item.id %}" class="add-review-button">Ajouter une critique</a>
+                </div>
+            {% else %}
+                <p>Critique déjà réalisée</p>
+                <!-- Lien qui amène à la critique dans le feed, supposons que la critique a un id unique -->
+                <a href="#critique-{{ item.id }}" class="go-to-review">Voir la critique</a>
+            {% endif %}
+        {% endif %} <!-- Fin de la condition pour Ticket -->
+
+        {% if item.get_model_name == 'Review' %}
+            <!-- Contenu pour review -->
+            <h3>{{ item.headline }}</h3>
+            <div class="rating">
+                {% for i in 0|range:item.rating %}
+                    <span class="star">&#9733;</span>  {# étoile pleine #}
+                {% endfor %}
+                {% for i in item.rating|range:5 %}
+                    <span class="star">&#9734;</span>  {# étoile vide #}
+                {% endfor %}
+            </div>
+
+            <p>{{ item.body }}</p>
+            <!-- Affichage des informations du ticket associé à la review -->
+            <div class="ticket-info">
+                <p>En réponse au ticket de {{ item.ticket.user.username }} intitulé : <strong>{{ item.ticket.title }}</strong></p>
+                <p>Description : {{ item.ticket.description }}</p>
+
+                {% if item.ticket.image %}
+                    <img src="{{ item.ticket.image.url }}" alt="Image pour {{ item.ticket.title }}" />
+                {% else %}
+                    <p>Pas d'image disponible pour ce ticket.</p>
+                {% endif %}
+            </div>
+        {% endif %} <!-- Fin de la condition pour Review -->
+    </div>
+    {% empty %}
+        <p>Aucun billet ou avis à afficher pour le moment.</p>
+    {% endfor %}
+</div>
+{% endblock %}

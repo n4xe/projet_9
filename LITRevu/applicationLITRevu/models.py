@@ -13,6 +13,11 @@ class Ticket(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
+    def get_model_name(self):
+        return "Ticket"
+
+    def has_review(self):
+        return self.review_set.exists()
 
 
 class Review(models.Model):
@@ -28,6 +33,8 @@ class Review(models.Model):
     def __str__(self):
         return f"Review by {self.user.username} on {self.ticket.title}"
 
+    def get_model_name(self):
+        return "Review"
 
 class UserFollows(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='following')
