@@ -36,7 +36,7 @@ def add_ticket(request):
             return redirect('add_ticket')
     else:
         form = TicketForm()
-    return render(request, 'ticket.html', {'form': form})
+    return render(request, 'feed.html')
 
 @login_required
 def edit_ticket(request, ticket_id):

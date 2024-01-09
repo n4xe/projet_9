@@ -182,6 +182,97 @@
             margin-bottom: 20px; /* Ajoute de l'espace en dessous de l'image */
             margin-left: 30px
         }
+        /* Add this to your existing CSS file or within a <style> tag in base.html */
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            color: #E0E0E0; /* Adjust color to match your site */
+        }
+
+        .form-container {
+            background-color: #252525; /* Dark background for the form */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-container h1 {
+            text-align: center;
+            color: #E0E0E0; /* Adjust color to match your site */
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container form p {
+            margin-bottom: 10px;
+        }
+
+        .form-container button {
+            background-color: #007BFF; /* Blue background color for buttons */
+            color: white; /* White text color for buttons */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .form-container input[type="file"] {
+            border: 1px solid #ddd; /* Border for file input */
+            padding: 5px;
+            margin-top:210px;
+        }
+
+        .form-container input[type="text"],
+        .form-container textarea {
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd; /* Border color for inputs */
+            background-color: #333; /* Background color for inputs */
+            color: #E0E0E0; /* Text color for inputs */
+        }
+
+        .form-container input[type="text"]:focus,
+        .form-container textarea:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+
+        /* Styles pour le conteneur de boutons */
+        .feed-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .follow-section {
+            border-top: 1px solid #4A4A4A; /* Ajoute une ligne de séparation */
+            padding-top: 20px; /* Espacement au-dessus de la section */
+            margin-top: 20px; /* Espacement entre les sections */
+        }
+
+        .follow-section h2 {
+            margin-bottom: 10px; /* Espacement sous le titre de la section */
+        }
+
+        .item-frame {
+            margin-bottom: 10px; /* Espacement entre les éléments de la liste */
+            padding: 10px; /* Espacement intérieur pour chaque élément de la liste */
+            background-color: #252525; /* Couleur de fond pour chaque élément */
+            border-radius: 5px; /* Coins arrondis pour les éléments de la liste */
+        }
+
 
         @media (max-width: 1200px) {
         .top-bar {
@@ -210,30 +301,7 @@
         nav li {
             padding: 5px 10px; /* Ajustez le padding si nécessaire */
         }
-        /* Styles pour le conteneur de boutons */
-        .feed-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
 
-        .follow-section {
-            border-top: 1px solid #4A4A4A; /* Ajoute une ligne de séparation */
-            padding-top: 20px; /* Espacement au-dessus de la section */
-            margin-top: 20px; /* Espacement entre les sections */
-        }
-
-        .follow-section h2 {
-            margin-bottom: 10px; /* Espacement sous le titre de la section */
-        }
-
-        .item-frame {
-            margin-bottom: 10px; /* Espacement entre les éléments de la liste */
-            padding: 10px; /* Espacement intérieur pour chaque élément de la liste */
-            background-color: #252525; /* Couleur de fond pour chaque élément */
-            border-radius: 5px; /* Coins arrondis pour les éléments de la liste */
-        }
 
 
 

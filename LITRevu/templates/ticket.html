@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="ticket-form-container">
-    <form method="post" enctype="multipart/form-data" class="ticket-form">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+<div class="container">
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data" class="ticket-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
 </div>
 {% endblock %}
