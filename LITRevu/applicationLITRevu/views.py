@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import *
-from .models import Ticket, Review, UserFollows
+from .models import *
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from itertools import chain
 from operator import attrgetter
 import logging
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -132,8 +133,29 @@ def delete_review(request, review_id):
 
 @login_required
 def user_follows(request):
-    follows = UserFollows.objects.filter(user=request.user)
-    followers = UserFollows.objects.filter(followed_user=request.user)
+
+    # Utilisateurs que l'utilisateur courant a bloqués
+    blocked_users_ids = UserBlock.objects.filter(blocker=request.user).values_list('blocked', flat=True)
+
+    # Abonnements, excluant les utilisateurs bloqués
+    follows = UserFollows.objects.filter(user=request.user).exclude(followed_user__in=blocked_users_ids)
+
+    # Abonnés, excluant les utilisateurs bloqués
+    followers = UserFollows.objects.filter(followed_user=request.user).exclude(user__in=blocked_users_ids)
+
+    # Utilisateurs bloqués par l'utilisateur courant
+    blocked_users = UserBlock.objects.filter(blocker=request.user).exclude(blocked__isnull=True)
+
+    # Récupérer les abonnements, les abonnés et les utilisateurs bloqués
+    follows = UserFollows.objects.filter(user=request.user) \
+        .exclude(followed_user__blocked_by__blocker=request.user) \
+        .exclude(followed_user__blocking__blocked=request.user)
+
+    followers = UserFollows.objects.filter(followed_user=request.user).exclude(user__blocking__blocked=request.user) \
+        .exclude(user__blocked_by__blocker=request.user) \
+        .exclude(user__blocking__blocked=request.user)
+
+    blocked = UserBlock.objects.filter(blocker=request.user)
     form = UserFollowForm()
 
     if request.method == 'POST':
@@ -143,8 +165,12 @@ def user_follows(request):
             try:
                 followed_user = User.objects.get(username=username_to_follow)
                 if followed_user != request.user:
-                    UserFollows.objects.get_or_create(user=request.user, followed_user=followed_user)
-                    messages.success(request, "L'utilisateur a bien été ajouté.")
+                    if not UserBlock.objects.filter(blocker=request.user, blocked=followed_user).exists():
+                        UserBlock.objects.create(blocker=request.user, blocked=followed_user)
+                        UserFollows.objects.get_or_create(user=request.user, followed_user=followed_user)
+                        messages.success(request, "L'utilisateur a bien été ajouté.")
+                    else:
+                        messages.error(request, "Vous avez bloqué cet utilisateur.")
                 else:
                     messages.error(request, "Vous ne pouvez pas vous suivre vous-même.")
             except User.DoesNotExist:
@@ -155,6 +181,7 @@ def user_follows(request):
     return render(request, 'user_follows.html', {
         'follows': follows,
         'followers': followers,
+        'blocked_users': blocked_users,
         'form': form
     })
 
@@ -181,6 +208,8 @@ def unfollow_user(request, user_id):
     return render(request, 'unfollow_confirm.html', {'follow': follow})
 
 
+from django.db.models import Q
+
 @login_required
 def feed(request):
     # Billets et avis de l'utilisateur connecté
@@ -190,13 +219,16 @@ def feed(request):
     # Utilisateurs suivis par l'utilisateur connecté
     followed_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
 
-    # Billets et avis des utilisateurs suivis
-    followed_tickets = Ticket.objects.filter(user__in=followed_users)
-    followed_reviews = Review.objects.filter(user__in=followed_users)
+    # Utilisateurs qui ont bloqué ou ont été bloqués par l'utilisateur connecté
+    blocked_users = UserBlock.objects.filter(Q(blocked=request.user) | Q(blocker=request.user)).values_list('blocked', flat=True)
+
+    # Billets et avis des utilisateurs suivis, en excluant les utilisateurs bloqués
+    followed_tickets = Ticket.objects.filter(user__in=followed_users).exclude(user__in=blocked_users)
+    followed_reviews = Review.objects.filter(user__in=followed_users).exclude(user__in=blocked_users)
 
     # Avis en réponse aux billets de l'utilisateur connecté qui ne sont pas déjà comptés dans user_reviews
     responses_to_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(
-        id__in=user_reviews.values_list('id', flat=True))
+        id__in=user_reviews.values_list('id', flat=True)).exclude(user__in=blocked_users)
 
     # Combinez les requêtes et ordonnez-les par date de création (les plus récents en premier)
     feed_items = sorted(
@@ -204,6 +236,7 @@ def feed(request):
         key=attrgetter('time_created'),
         reverse=True
     )
+
     for item in feed_items:
         if hasattr(item, 'rating'):  # Vérifiez si l'item a un attribut 'rating'
             # Créez des listes d'étoiles pleines et vides
@@ -214,10 +247,28 @@ def feed(request):
 
 @login_required
 def posts(request):
-    user_tickets = Ticket.objects.filter(user=request.user)
-    user_reviews = Review.objects.filter(user=request.user)
+    user_tickets = Ticket.objects.filter(user=request.user).order_by('-time_created')
+    user_reviews = Review.objects.filter(user=request.user).order_by('-time_created')
 
-    return render(request, 'posts.html', {
-        'user_tickets': user_tickets,
-        'user_reviews': user_reviews
-    })
+    # Combine les tickets et les reviews en une seule liste
+    user_posts = sorted(
+        chain(user_tickets, user_reviews),
+        key=attrgetter('time_created'),
+        reverse=True  # Tri décroissant pour obtenir les plus récents en premier
+    )
+
+    return render(request, 'posts.html', {'user_posts': user_posts})
+
+@login_required
+def block_user(request, user_id):
+    user_to_block = get_object_or_404(User, pk=user_id)
+    UserBlock.objects.create(blocker=request.user, blocked=user_to_block)
+    # Redirigez l'utilisateur vers la page appropriée après le blocage
+    return redirect('user_follows')
+
+@login_required
+def unblock_user(request, user_id):
+    # Récupérer l'instance UserBlock et la supprimer
+    UserBlock.objects.filter(blocker=request.user, blocked__id=user_id).delete()
+    # Redirection vers la page d'abonnements
+    return redirect('user_follows')

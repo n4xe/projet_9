@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Ticket, Review, UserFollows
+from .models import CustomUser, Ticket, Review, UserFollows, UserBlock
 
 
 # Register your models here.
@@ -29,3 +29,8 @@ class ReviewAdmin(admin.ModelAdmin):
 class UserFollowsAdmin(admin.ModelAdmin):
     list_display = ['user', 'followed_user']
     search_fields = ['user__username', 'followed_user__username']
+
+@admin.register(UserBlock)
+class UserBlockAdmin(admin.ModelAdmin):
+    list_display = ['blocker', 'blocked', 'created_at']
+    search_fields = ['blocker__username', 'blocked__username']

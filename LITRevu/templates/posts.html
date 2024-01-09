@@ -1,29 +1,64 @@
 {% extends 'base.html' %}
+{% load custom_tags %}
 
 {% block content %}
 <div class="feed-container">
-    <h1>Vos posts</h1>
-
-    {% for ticket in user_tickets %}
-    <div class="item-frame ticket">
-        <!-- Contenu du ticket -->
-        <h2>{{ ticket.title }}</h2>
-        <img src="{{ ticket.image.url }}" alt="Image pour {{ ticket.title }}" />
-        <!-- Boutons pour modifier et supprimer -->
-        <a href="{% url 'edit_ticket' ticket.id %}" class="button">Modifier</a>
-        <a href="{% url 'delete_ticket' ticket.id %}" class="button">Supprimer</a>
+    <!-- Ajout des boutons au haut de la page -->
+    <div class="feed-buttons">
+        <!-- Boutons, si nécessaire -->
     </div>
-    {% endfor %}
 
-    {% for review in user_reviews %}
-    <div class="item-frame review">
-        <!-- Contenu de la critique -->
-        <h3>{{ review.headline }}</h3>
-        <p>{{ review.body }}</p>
-        <!-- Boutons pour modifier et supprimer -->
-        <a href="{% url 'edit_review' review.id %}" class="button">Modifier</a>
-        <a href="{% url 'delete_review' review.id %}" class="button">Supprimer</a>
-    </div>
+    {% for post in user_posts %}
+        <div class="item-frame {% if post.get_model_name == 'Ticket' %}ticket{% elif post.get_model_name == 'Review' %}review{% endif %}">
+            <div class="item-header">
+                <span class="created-info">
+                    Créé par <strong>{{ post.user.username }}</strong>
+                </span>
+                <span class="created-date">
+                    {{ post.time_created|date:"d M Y à H:i" }}
+                </span>
+            </div>
+            {% if post.get_model_name == 'Ticket' %}
+                <h2>{{ post.title }}</h2>
+                <p>{{ post.description }}</p>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Image pour {{ post.title }}" />
+                {% else %}
+                    <p>Pas d'image disponible.</p>
+                {% endif %}
+                <div class="post-actions">
+                    <a href="{% url 'edit_ticket' post.id %}" class="button">Modifier</a>
+                    <a href="{% url 'delete_ticket' post.id %}" class="button">Supprimer</a>
+                </div>
+            {% elif post.get_model_name == 'Review' %}
+                <h3>{{ post.headline }}</h3>
+                <div class="rating">
+                    {% for i in 0|range:post.rating %}
+                        <span class="star">&#9733;</span> <!-- étoile pleine -->
+                    {% endfor %}
+                    {% for i in post.rating|range:5 %}
+                        <span class="star">&#9734;</span> <!-- étoile vide -->
+                    {% endfor %}
+                </div>
+                <p>{{ post.body }}</p>
+                <!-- Affichage des informations du ticket associé à la review -->
+                <div class="ticket-info">
+                    <p>En réponse au ticket de {{ post.ticket.user.username }} intitulé : <strong>{{ post.ticket.title }}</strong></p>
+                    <p>Description : {{ post.ticket.description }}</p>
+                    {% if post.ticket.image %}
+                        <img src="{{ post.ticket.image.url }}" alt="Image pour {{ post.ticket.title }}" />
+                    {% else %}
+                        <p>Pas d'image disponible pour ce ticket.</p>
+                    {% endif %}
+                </div>
+                <div class="post-actions">
+                    <a href="{% url 'edit_review' post.id %}" class="button">Modifier</a>
+                    <a href="{% url 'delete_review' post.id %}" class="button">Supprimer</a>
+                </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Aucun billet ou avis à afficher pour le moment.</p>
     {% endfor %}
 </div>
 {% endblock %}

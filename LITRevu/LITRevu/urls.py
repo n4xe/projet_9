@@ -38,4 +38,6 @@ urlpatterns = [
     path('users/unfollow/<int:user_id>/', unfollow_user, name='unfollow_user'),
     path('feed/', feed, name='feed'),
     path('posts/', posts, name='posts'),
+    path('block/<int:user_id>/', block_user, name='block_user'),
+    path('unblock/<int:user_id>/', unblock_user, name='unblock_user'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

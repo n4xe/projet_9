@@ -1,26 +1,26 @@
-<!-- user_follows.html -->
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="feed-container">
-     <div class="ticket-form-container">
+    <div class="ticket-form-container">
         <!-- Formulaire pour suivre un nouvel utilisateur -->
         <h2>Ajouter un utilisateur</h2>
-            <form method="post" action="{% url 'user_follows' %}" class="ticket-form">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Suivre</button>
-            </form>
+        <form method="post" action="{% url 'user_follows' %}" class="ticket-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="button">Suivre</button>
+        </form>
     </div>
 
     <div class="follow-section">
         <h2>Abonnements</h2>
         <!-- Liste des utilisateurs suivis -->
         {% for follow in follows %}
-            <div class="ticket">
+            <div class="item-frame">
                 <p>{{ follow.followed_user.username }}</p>
                 <!-- Lien pour se désabonner -->
-                <a href="{% url 'unfollow_user' follow.followed_user.id %}" class="btn">Désabonner</a>
+                <a href="{% url 'unfollow_user' follow.followed_user.id %}" class="button">Se désabonner</a>
+                <a href="{% url 'block_user' follow.followed_user.id %}" class="button">Bloquer</a>
             </div>
         {% endfor %}
     </div>
@@ -29,11 +29,25 @@
         <h2>Abonnés</h2>
         <!-- Liste des abonnés -->
         {% for follower in followers %}
-            <div class="ticket">
+            <div class="item-frame">
                 <p>{{ follower.user.username }}</p>
-                <!-- Optionnellement, ajoutez des actions comme message ou désabonner -->
+                <a href="{% url 'block_user' follower.user.id %}" class="button">Bloquer</a>
             </div>
         {% endfor %}
     </div>
+
+    <h2>Utilisateurs bloqués</h2>
+   {% for user in blocked_users %}
+    <div class="item-frame">
+        <p>{{ user.blocked.username }}</p>
+        <!-- Check if user.blocked.id exists before rendering the link -->
+        {% if user.blocked.id %}
+        <a href="{% url 'unblock_user' user.blocked.id %}" class="button">Débloquer</a>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>Aucun utilisateur bloqué.</p>
+    {% endfor %}
+
 </div>
 {% endblock %}

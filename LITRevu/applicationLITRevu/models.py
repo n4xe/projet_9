@@ -40,5 +40,27 @@ class UserFollows(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='following')
     followed_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='followed_by')
 
-class Meta:
-    unique_together = ('user', 'followed_user',)
+    class Meta:
+        unique_together = ('user', 'followed_user',)
+
+class UserBlock(models.Model):
+    # L'utilisateur qui effectue le blocage
+    blocker = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='blocking',
+        on_delete=models.CASCADE
+    )
+    # L'utilisateur qui est bloqué
+    blocked = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='blocked_by',
+        on_delete=models.CASCADE
+    )
+    # Date et heure du blocage
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('blocker', 'blocked',)
+
+    def __str__(self):
+        return f"{self.blocker.username} blocks {self.blocked.username}"
