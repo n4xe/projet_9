@@ -182,7 +182,7 @@
             margin-bottom: 20px; /* Ajoute de l'espace en dessous de l'image */
             margin-left: 30px
         }
-        /* Add this to your existing CSS file or within a <style> tag in base.html */
+
         .container {
             max-width: 600px;
             margin: auto;
@@ -273,6 +273,29 @@
             border-radius: 5px; /* Coins arrondis pour les éléments de la liste */
         }
 
+        .message {
+            visibility: hidden; /* Cache le message initialement */
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: #f8d7da; /* Couleur de fond pour les messages d'erreur */
+            color: #721c24; /* Couleur du texte pour les messages d'erreur */
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .message.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
 
         @media (max-width: 1200px) {
         .top-bar {
@@ -308,8 +331,30 @@
     </style>
     {% block extra_head %}{% endblock %}
 
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+        // Affiche le message pendant un court moment avant de le cacher
+        const messages = document.querySelectorAll('.message');
+        messages.forEach((message) => {
+            message.classList.add('visible');
+            setTimeout(() => {
+                message.classList.remove('visible');
+            }, 4000); // Le message reste visible pendant 4 secondes
+        });
+    });
+    </script>
+
 </head>
 <body>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <header>
         <div class="top-bar">
             <!-- Partie gauche du bandeau -->

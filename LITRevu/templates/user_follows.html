@@ -3,6 +3,7 @@
 {% block content %}
 <div class="feed-container">
     <div class="ticket-form-container">
+
         <!-- Formulaire pour suivre un nouvel utilisateur -->
         <h2>Ajouter un utilisateur</h2>
         <form method="post" action="{% url 'user_follows' %}" class="ticket-form">
@@ -37,17 +38,25 @@
     </div>
 
     <h2>Utilisateurs bloqués</h2>
-   {% for user in blocked_users %}
+    {% for user in blocked_users %}
     <div class="item-frame">
-        <p>{{ user.blocked.username }}</p>
-        <!-- Check if user.blocked.id exists before rendering the link -->
-        {% if user.blocked.id %}
-        <a href="{% url 'unblock_user' user.blocked.id %}" class="button">Débloquer</a>
-        {% endif %}
+        <p>{{ user.username }}</p>
+        <!-- Directly link to the unblock_user URL with the user's ID -->
+        <a href="{% url 'unblock_user' user.id %}" class="button">Débloquer</a>
     </div>
     {% empty %}
     <p>Aucun utilisateur bloqué.</p>
     {% endfor %}
+
+    {% if messages %}
+    <div id="message-container" class="messages">
+        {% for message in messages %}
+        <div class="{{ message.tags }} message">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
 </div>
 {% endblock %}

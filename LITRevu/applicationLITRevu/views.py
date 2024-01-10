@@ -1,15 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
-from .forms import *
-from .models import *
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.db.models import Q
 from itertools import chain
 from operator import attrgetter
+from .forms import CustomUserCreationForm, TicketForm, ReviewForm, UserFollowForm, User
+from .models import Ticket, Review, UserFollows, UserBlock
 import logging
-from django.db.models import Q
+
 
 logger = logging.getLogger(__name__)
+
 
 def signup_view(request):
     if request.method == 'POST':
@@ -33,10 +35,13 @@ def add_ticket(request):
             ticket = form.save(commit=False)
             ticket.user = request.user
             ticket.save()
-            return redirect('add_ticket')
+            return redirect('feed')  # Assume you have a 'feed' view to redirect to
     else:
-        form = TicketForm()
-    return render(request, 'feed.html')
+        form = TicketForm()  # This form will be used for GET requests or POST requests that are not valid
+
+    # Now 'form' is passed to the template whether it's a fresh one or one with errors from an invalid POST
+    return render(request, 'ticket.html', {'form': form})
+
 
 @login_required
 def edit_ticket(request, ticket_id):
@@ -49,6 +54,7 @@ def edit_ticket(request, ticket_id):
     else:
         form = TicketForm(instance=ticket)
     return render(request, 'ticket.html', {'form': form})
+
 
 @login_required
 def delete_ticket(request, ticket_id):
@@ -77,8 +83,7 @@ def create_review(request):
             messages.debug(request, f'Review {review.id} created for ticket {ticket.id} by {request.user.username}')
 
             return redirect('feed')
-            logger.debug(f'Ticket {ticket.id} created by {request.user.username}')
-            logger.debug(f'Review {review.id} created for ticket {ticket.id} by {request.user.username}')
+
         else:
             messages.error(request, 'There was an error with the form.')
     else:
@@ -90,6 +95,7 @@ def create_review(request):
         'review_form': review_form
     }
     return render(request, 'create_review.html', context)
+
 
 @login_required
 def add_review(request, ticket_id):
@@ -133,8 +139,7 @@ def delete_review(request, review_id):
 
 @login_required
 def user_follows(request):
-
-    # Utilisateurs que l'utilisateur courant a bloqués
+    # Récupérer les IDs des utilisateurs bloqués
     blocked_users_ids = UserBlock.objects.filter(blocker=request.user).values_list('blocked', flat=True)
 
     # Abonnements, excluant les utilisateurs bloqués
@@ -143,21 +148,10 @@ def user_follows(request):
     # Abonnés, excluant les utilisateurs bloqués
     followers = UserFollows.objects.filter(followed_user=request.user).exclude(user__in=blocked_users_ids)
 
-    # Utilisateurs bloqués par l'utilisateur courant
-    blocked_users = UserBlock.objects.filter(blocker=request.user).exclude(blocked__isnull=True)
+    # Utilisateurs bloqués
+    blocked_users = User.objects.filter(id__in=blocked_users_ids)
 
-    # Récupérer les abonnements, les abonnés et les utilisateurs bloqués
-    follows = UserFollows.objects.filter(user=request.user) \
-        .exclude(followed_user__blocked_by__blocker=request.user) \
-        .exclude(followed_user__blocking__blocked=request.user)
-
-    followers = UserFollows.objects.filter(followed_user=request.user).exclude(user__blocking__blocked=request.user) \
-        .exclude(user__blocked_by__blocker=request.user) \
-        .exclude(user__blocking__blocked=request.user)
-
-    blocked = UserBlock.objects.filter(blocker=request.user)
     form = UserFollowForm()
-
     if request.method == 'POST':
         form = UserFollowForm(request.POST)
         if form.is_valid():
@@ -165,18 +159,19 @@ def user_follows(request):
             try:
                 followed_user = User.objects.get(username=username_to_follow)
                 if followed_user != request.user:
-                    if not UserBlock.objects.filter(blocker=request.user, blocked=followed_user).exists():
-                        UserBlock.objects.create(blocker=request.user, blocked=followed_user)
-                        UserFollows.objects.get_or_create(user=request.user, followed_user=followed_user)
-                        messages.success(request, "L'utilisateur a bien été ajouté.")
-                    else:
+                    if UserFollows.objects.filter(user=request.user, followed_user=followed_user).exists():
+                        messages.error(request, "Vous suivez déjà cet utilisateur.")
+                    elif UserBlock.objects.filter(blocker=request.user, blocked=followed_user).exists():
                         messages.error(request, "Vous avez bloqué cet utilisateur.")
+                    else:
+                        UserFollows.objects.create(user=request.user, followed_user=followed_user)
+                        messages.success(request, "Utilisateur suivi avec succès.")
                 else:
                     messages.error(request, "Vous ne pouvez pas vous suivre vous-même.")
             except User.DoesNotExist:
                 messages.error(request, "L'utilisateur saisi n'existe pas.")
         else:
-            messages.error(request, "Le formulaire n'est pas valide.")
+            form = UserFollowForm()  # Réinitialiser le formulaire après la soumission
 
     return render(request, 'user_follows.html', {
         'follows': follows,
@@ -185,19 +180,31 @@ def user_follows(request):
         'form': form
     })
 
+
 @login_required
 def follow_user(request):
     if request.method == 'POST':
         form = UserFollowForm(request.POST)
         if form.is_valid():
-            followed_user = User.objects.get(username=form.cleaned_data['username'])
-            # Empêcher l'abonnement à soi-même
-            if followed_user != request.user:
-                UserFollows.objects.create(user=request.user, followed_user=followed_user)
-            return redirect('user_follows')
+            username_to_follow = form.cleaned_data['username']
+            try:
+                followed_user = User.objects.get(username=username_to_follow)
+                if followed_user != request.user:
+                    # Vérifier si l'utilisateur est déjà suivi
+                    if UserFollows.objects.filter(user=request.user, followed_user=followed_user).exists():
+                        messages.info(request, "Vous êtes déjà abonné à cet utilisateur.")
+                    else:
+                        # Créer l'abonnement si il n'existe pas déjà
+                        UserFollows.objects.create(user=request.user, followed_user=followed_user)
+                        messages.success(request, "Vous vous êtes abonné avec succès.")
+                else:
+                    messages.error(request, "Vous ne pouvez pas vous suivre vous-même.")
+            except User.DoesNotExist:
+                messages.error(request, "L'utilisateur saisi n'existe pas.")
     else:
         form = UserFollowForm()
     return render(request, 'follow_user.html', {'form': form})
+
 
 @login_required
 def unfollow_user(request, user_id):
@@ -207,8 +214,6 @@ def unfollow_user(request, user_id):
         return redirect('user_follows')
     return render(request, 'unfollow_confirm.html', {'follow': follow})
 
-
-from django.db.models import Q
 
 @login_required
 def feed(request):
@@ -220,7 +225,8 @@ def feed(request):
     followed_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
 
     # Utilisateurs qui ont bloqué ou ont été bloqués par l'utilisateur connecté
-    blocked_users = UserBlock.objects.filter(Q(blocked=request.user) | Q(blocker=request.user)).values_list('blocked', flat=True)
+    blocked_users = UserBlock.objects.filter(Q(blocked=request.user) | Q(blocker=request.user)).values_list('blocked',
+                                                                                                            flat=True)
 
     # Billets et avis des utilisateurs suivis, en excluant les utilisateurs bloqués
     followed_tickets = Ticket.objects.filter(user__in=followed_users).exclude(user__in=blocked_users)
@@ -245,6 +251,7 @@ def feed(request):
 
     return render(request, 'feed.html', {'feed_items': feed_items})
 
+
 @login_required
 def posts(request):
     user_tickets = Ticket.objects.filter(user=request.user).order_by('-time_created')
@@ -259,12 +266,14 @@ def posts(request):
 
     return render(request, 'posts.html', {'user_posts': user_posts})
 
+
 @login_required
 def block_user(request, user_id):
     user_to_block = get_object_or_404(User, pk=user_id)
     UserBlock.objects.create(blocker=request.user, blocked=user_to_block)
     # Redirigez l'utilisateur vers la page appropriée après le blocage
     return redirect('user_follows')
+
 
 @login_required
 def unblock_user(request, user_id):

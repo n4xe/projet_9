@@ -15,29 +15,30 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path, include
+from django.urls import path
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
-from applicationLITRevu.views import *
+from applicationLITRevu.views import signup_view, add_ticket, edit_ticket, delete_ticket, create_review, add_review, \
+    edit_review, delete_review, user_follows, unfollow_user, feed, posts, block_user, unblock_user
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('signup/', signup_view, name='signup'),
-    path('tickets/add/', add_ticket, name='add_ticket'),
-    path('tickets/edit/<int:ticket_id>/', edit_ticket, name='edit_ticket'),
-    path('tickets/delete/<int:ticket_id>/', delete_ticket, name='delete_ticket'),
-    path('reviews/create/', create_review, name='create_review'),
-    path('tickets/<int:ticket_id>/reviews/add/', add_review, name='add_review'),
-    path('reviews/<int:review_id>/edit/', edit_review, name='edit_review'),
-    path('reviews/<int:review_id>/delete/', delete_review, name='delete_review'),
-    path('users/follows/', user_follows, name='user_follows'),
-    path('users/unfollow/<int:user_id>/', unfollow_user, name='unfollow_user'),
-    path('feed/', feed, name='feed'),
-    path('posts/', posts, name='posts'),
-    path('block/<int:user_id>/', block_user, name='block_user'),
-    path('unblock/<int:user_id>/', unblock_user, name='unblock_user'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path('admin/', admin.site.urls),
+                  path('', LoginView.as_view(template_name='login.html'), name='login'),
+                  path('logout/', LogoutView.as_view(), name='logout'),
+                  path('signup/', signup_view, name='signup'),
+                  path('tickets/add/', add_ticket, name='add_ticket'),
+                  path('tickets/edit/<int:ticket_id>/', edit_ticket, name='edit_ticket'),
+                  path('tickets/delete/<int:ticket_id>/', delete_ticket, name='delete_ticket'),
+                  path('reviews/create/', create_review, name='create_review'),
+                  path('tickets/<int:ticket_id>/reviews/add/', add_review, name='add_review'),
+                  path('reviews/<int:review_id>/edit/', edit_review, name='edit_review'),
+                  path('reviews/<int:review_id>/delete/', delete_review, name='delete_review'),
+                  path('users/follows/', user_follows, name='user_follows'),
+                  path('users/unfollow/<int:user_id>/', unfollow_user, name='unfollow_user'),
+                  path('feed/', feed, name='feed'),
+                  path('posts/', posts, name='posts'),
+                  path('block/<int:user_id>/', block_user, name='block_user'),
+                  path('unblock/<int:user_id>/', unblock_user, name='unblock_user'),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

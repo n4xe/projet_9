@@ -30,6 +30,7 @@ class UserFollowsAdmin(admin.ModelAdmin):
     list_display = ['user', 'followed_user']
     search_fields = ['user__username', 'followed_user__username']
 
+
 @admin.register(UserBlock)
 class UserBlockAdmin(admin.ModelAdmin):
     list_display = ['blocker', 'blocked', 'created_at']

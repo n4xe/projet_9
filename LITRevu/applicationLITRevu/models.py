@@ -7,12 +7,14 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class CustomUser(AbstractUser):
     pass
 
+
 class Ticket(models.Model):
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=2048, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
+
     def get_model_name(self):
         return "Ticket"
 
@@ -36,12 +38,14 @@ class Review(models.Model):
     def get_model_name(self):
         return "Review"
 
+
 class UserFollows(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='following')
     followed_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='followed_by')
 
     class Meta:
         unique_together = ('user', 'followed_user',)
+
 
 class UserBlock(models.Model):
     # L'utilisateur qui effectue le blocage
