@@ -1,0 +1,43 @@
+# LITReview
+
+LITReview est une application web Django conçue pour partager et commenter des critiques littéraires.
+Elle offre une plateforme collaborative où les utilisateurs peuvent:
+- suivre leurs activités littéraires et celles de leurs abonnements via une page de flux
+- peuvent poster des critiques littéraires ou en demander en créant des tickets
+- suivre, modifier ou supprimer ses revues/tickets via une page de posts
+- gérer leurs abonnements via une page d'abonnements
+
+## Caractéristiques
+
+- Inscription et authentification des utilisateurs.
+- Publication et gestion des critiques et des tickets.
+- Système de suivi des utilisateurs et gestion des abonnements.
+- Interface utilisateur responsive et intuitive.
+
+## Prérequis
+
+- Python 3.8 ou supérieur.
+- Django 5.0.1.
+- Un système de gestion de base de données SQLite
+
+## Installation
+
+1. Clonez le dépôt sur votre machine locale :
+
+```bash
+https://github.com/n4xe/projet_9.git
+
+2. Naviguez dans le dossier du projet :
+cd projet_9/LITRevu
+
+3. Installez les dépendances du projet :
+pip install -r requirements.txt
+
+4.Effectuez les migrations de base de données :
+python manage.py migrate
+
+##Lancement
+Pour démarrer le serveur de développement :
+python manage.py runserver
+Votre application sera accessible à http://127.0.0.1:8000/.
+
