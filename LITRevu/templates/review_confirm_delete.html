@@ -6,8 +6,8 @@
     <p>Êtes-vous sûr de vouloir supprimer cette critique : "{{ review.headline }}"?</p>
     <form method="post">
         {% csrf_token %}
-        <button type="submit">Oui, supprimer</button>
+        <button type="submit">Confirmer la suppression</button>
     </form>
-    <a href="{% url 'ticket_detail' review.ticket.id %}">Non, retourner</a>
+    <a href="{% url 'delete_review' review.ticket.id %}">Annuler</a>
 </div>
 {% endblock %}

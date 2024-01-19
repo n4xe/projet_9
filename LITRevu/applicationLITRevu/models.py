@@ -9,8 +9,8 @@ class CustomUser(AbstractUser):
 
 
 class Ticket(models.Model):
-    title = models.CharField(max_length=128)
-    description = models.TextField(max_length=2048, blank=True)
+    title = models.CharField("Titre", max_length=128)
+    description = models.TextField("Description", max_length=2048, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
@@ -25,11 +25,11 @@ class Ticket(models.Model):
 class Review(models.Model):
     ticket = models.ForeignKey('Ticket', on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    headline = models.CharField(max_length=128)
-    rating = models.PositiveSmallIntegerField(
+    headline = models.CharField("Titre", max_length=128)
+    rating = models.PositiveSmallIntegerField("Evaluation",
         validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
-    body = models.TextField(max_length=8192, blank=True)
+    body = models.TextField("Critique", max_length=8192, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

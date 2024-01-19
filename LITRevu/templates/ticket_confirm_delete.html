@@ -4,7 +4,11 @@
 {% block content %}
 <form method="post">
     {% csrf_token %}
-    <p>Are you sure you want to delete "{{ ticket.title }}"?</p>
-    <button type="submit">Yes, delete it</button>
+    <p>Êtes-vous sûr de vouloir supprimer ce ticket : "{{ ticket.title }}"?</p>
+    <<form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirmer la suppression</button>
+    </form>
+    <a href="{% url 'delete_ticket' ticket.id %}">Annuler</a>
 </form>
 {% endblock %}

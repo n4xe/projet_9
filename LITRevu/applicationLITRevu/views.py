@@ -50,7 +50,7 @@ def edit_ticket(request, ticket_id):
         form = TicketForm(request.POST, request.FILES, instance=ticket)
         if form.is_valid():
             form.save()
-            return redirect('add_ticket')
+            return redirect('posts')
     else:
         form = TicketForm(instance=ticket)
     return render(request, 'ticket.html', {'form': form})
@@ -61,7 +61,8 @@ def delete_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id, user=request.user)
     if request.method == 'POST':
         ticket.delete()
-        return redirect('add_ticket')
+        messages.success(request, "Ticket supprimé")
+        return redirect('posts')
     return render(request, 'ticket_confirm_delete.html', {'ticket': ticket})
 
 
@@ -120,8 +121,7 @@ def edit_review(request, review_id):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
-            # Redirigez vers la page de détail de la critique ou une autre vue pertinente
-            return redirect('feed/')
+            return redirect('posts')
     else:
         form = ReviewForm(instance=review)
     return render(request, 'review_form.html', {'form': form, 'ticket': review.ticket})
@@ -132,8 +132,8 @@ def delete_review(request, review_id):
     review = get_object_or_404(Review, pk=review_id, user=request.user)
     if request.method == 'POST':
         review.delete()
-        # Redirigez vers la liste des tickets ou une autre vue pertinente après la suppression
-        return redirect('ticket_list')
+        messages.success(request, "Critique supprimée")
+        return redirect('posts')  # Ou toute autre vue de redirection
     return render(request, 'review_confirm_delete.html', {'review': review})
 
 

@@ -5,7 +5,7 @@
     <div class="form-container">
         {% if ticket %}
             <div class="ticket-display">
-                <h2>Répondre au ticket de {{ ticket.user.username }}</h2>
+                <h2>Ticket de {{ ticket.user.username }} sur {{ ticket.title }}</h2>
                 <p>{{ ticket.description }}</p>
                 {% if ticket.image %}
                     <img src="{{ ticket.image.url }}" alt="{{ ticket.title }}" style="max-width: 100%; height: auto;"/>

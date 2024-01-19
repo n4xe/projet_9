@@ -17,11 +17,13 @@
         <h2>Abonnements</h2>
         <!-- Liste des utilisateurs suivis -->
         {% for follow in follows %}
-            <div class="item-frame">
+            <div class="abonnements item-frame-follows">
                 <p>{{ follow.followed_user.username }}</p>
                 <!-- Lien pour se désabonner -->
-                <a href="{% url 'unfollow_user' follow.followed_user.id %}" class="button">Se désabonner</a>
-                <a href="{% url 'block_user' follow.followed_user.id %}" class="button">Bloquer</a>
+                <div class="button-group">
+                    <a href="{% url 'unfollow_user' follow.followed_user.id %}" class="button">Se désabonner</a>
+                    <a href="{% url 'block_user' follow.followed_user.id %}" class="button">Bloquer</a>
+                </div>
             </div>
         {% endfor %}
     </div>
@@ -30,7 +32,7 @@
         <h2>Abonnés</h2>
         <!-- Liste des abonnés -->
         {% for follower in followers %}
-            <div class="item-frame">
+            <div class="abonnes item-frame-follows">
                 <p>{{ follower.user.username }}</p>
                 <a href="{% url 'block_user' follower.user.id %}" class="button">Bloquer</a>
             </div>
@@ -39,10 +41,10 @@
 
     <h2>Utilisateurs bloqués</h2>
     {% for user in blocked_users %}
-    <div class="item-frame">
+    <div class="item-frame-follows">
         <p>{{ user.username }}</p>
         <!-- Directly link to the unblock_user URL with the user's ID -->
-        <a href="{% url 'unblock_user' user.id %}" class="button">Débloquer</a>
+        <a href="{% url 'unblock_user' user.id %}" class="button button-follow-section">Débloquer</a>
     </div>
     {% empty %}
     <p>Aucun utilisateur bloqué.</p>

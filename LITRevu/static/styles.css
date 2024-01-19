@@ -1,0 +1,336 @@
+body {
+    background-color: #121212; /* Dark color */
+    font-family: Arial, sans-serif;
+    color: white;
+    padding-top: 70px; /* For buttons */
+}
+
+/* Header */
+
+.top-bar {
+    background-color: #007BFF; /* Website blue */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    position: fixed; /* Have nav during feed scrolling */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    height: 60px;
+}
+
+.top-bar h1 {
+    font-size: 24px;
+}
+
+.welcome-message {
+    position: absolute;
+    left: 20px;
+}
+
+nav {
+    position: absolute;
+    right: 20px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav li {
+    padding: 5px 10px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline; /* Underline when hover */
+}
+
+.star {
+    color: Goldenrod;
+}
+
+/* Ticket into review */
+.ticket-info {
+    border: 1px solid #4A4A4A;
+    background-color: #333333;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+/* Feed button container */
+.feed-buttons {
+    text-align: center; /* Centre les boutons */
+}
+
+/* Buttons for feed and posts */
+.button {
+    padding: 10px 20px;
+    border: 1px solid #007BFF; /* Website blue */
+    background-color: #333333; /* Lightgrey */
+    color: #007BFF; /* Website blue */
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.post-actions {
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    position: absolute;
+}
+
+
+/* Style change */
+.button:hover {
+    background-color: #007BFF; /* Website blue */
+    color: #121212; /* Darkgrey */
+}
+
+/* "Ajouter une critique" */
+.add-review-container {
+    bottom: 10px;
+    right: 10px;
+}
+
+.add-review-button, .go-to-review {
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    background-color: #007BFF; /* Blue */
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-decoration: none; /* No underline */
+    display: inline-block;
+    margin: 10px 0;
+    transition: background-color 0.3s, color 0.3s; /* Transition douce pour le survol */
+    position: absolute;
+
+}
+
+.add-review-button:hover, .go-to-review:hover {
+    background-color: white; /* Website blue */
+    color: #007BFF; /* Darkgrey */
+}
+
+.feed-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+
+}
+
+.item-frame-follows {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #252525;
+    border-radius: 5px;
+    position: relative;
+    color: #E0E0E0;
+    margin-bottom: 10px;
+}
+
+.item-frame {
+    margin-bottom: 10px;
+    padding: 20px 30px 10px 30px;
+    background-color: #252525; /* light grey */
+    border-radius: 5px;
+    position: relative;
+    color: #E0E0E0; /* Light text color (contrast following WCAG) */
+}
+
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #4A4A4A
+}
+
+.created-info {
+    font-weight: bold;
+}
+
+.created-date {
+    font-size: 0.9em;
+    color: #666; /* Light grey */
+}
+
+
+.ticket h2, .review h3 {
+    color: #007BFF;
+    font-size: 1.5em;
+}
+
+img {
+    max-width: 90%;
+    max-height: 500px;
+    display: block;
+    margin-bottom: 20px;
+    margin-left: 30px;
+    margin-right: 30px
+}
+
+/* Tickets/reviews */
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    color: #E0E0E0;
+}
+
+.ticket-form {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Form for all form containers */
+.form-container {
+    width: 600px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #252525;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.container h1 {
+    font-size: 1.5em;
+}
+
+.form-container label,
+.form-container input,
+.form-container textarea,
+.form-container button {
+    width: 100%; /* Makes all form elements take full width of the container */
+    margin-bottom: 10px; /* Adds space below each form element */
+}
+
+.form-container input[type="file"] {
+    border: 1px solid #ddd;
+    padding: 5px;
+    width: auto; /* Allows file input to not stretch full width */
+}
+
+.form-container input[type="text"],
+.form-container textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #333;
+    color: #E0E0E0;
+}
+
+/* Additional styles for focus state */
+.form-container input[type="text"]:focus,
+.form-container textarea:focus {
+outline: none;
+border-color: #007BFF; /* Highlight with the website's blue color */
+}
+
+
+/* Styles pour le conteneur de boutons */
+.feed-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.follow-section {
+    border-top: 1px solid #4A4A4A; /* Ajoute une ligne de séparation */
+    padding-top: 20px; /* Espacement au-dessus de la section */
+    margin-top: 20px; /* Espacement entre les sections */
+}
+
+.follow-section h2 {
+    margin-bottom: 10px; /* Espacement sous le titre de la section */
+}
+
+
+
+.message {
+    visibility: hidden; /* First hidde message */
+    opacity: 0;
+    transition: visibility 0s, opacity 0.5s linear;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.message.success {
+    background-color: #d4edda; /* Vert pour succès */
+    color: #155724; /* Texte vert foncé */
+}
+
+.message.error {
+    background-color: #f8d7da; /* Rouge pour erreur */
+    color: #721c24; /* Texte rouge foncé */
+}
+
+.message.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+@media (max-width: 1200px) {
+.top-bar {
+    flex-direction: column; /* Empile le titre et la navigation verticalement */
+    align-items: center; /* Centre le titre et la navigation horizontalement */
+}
+
+.header-container {
+    flex-direction: column;
+}
+
+nav {
+    position: static;
+    width: 100%; /* Assurez-vous que la navigation prend toute la largeur */
+    display: flex;
+    justify-content: center; /* Centre la navigation sous le titre */
+    padding-top: 10px; /* Ajoute un peu d'espace entre le titre et la navigation */
+}
+
+nav ul {
+    flex-direction: row; /* Garde les éléments de navigation en ligne */
+    justify-content: center; /* Centre les liens de navigation horizontalement */
+    gap: 10px; /* Ajustez l'écartement si nécessaire */
+}
+
+nav li {
+    padding: 5px 10px; /* Ajustez le padding si nécessaire */
+}
+
+.form-container {
+align-items: center; / Center aligns form items for small screens */
