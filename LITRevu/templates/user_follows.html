@@ -4,6 +4,16 @@
 <div class="feed-container">
     <div class="ticket-form-container">
 
+        {% if messages %}
+        <div id="message-container" class="messages">
+            {% for message in messages %}
+            <div class="{{ message.tags }} message">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <!-- Formulaire pour suivre un nouvel utilisateur -->
         <h2>Ajouter un utilisateur</h2>
         <form method="post" action="{% url 'user_follows' %}" class="ticket-form">
@@ -49,16 +59,6 @@
     {% empty %}
     <p>Aucun utilisateur bloqué.</p>
     {% endfor %}
-
-    {% if messages %}
-    <div id="message-container" class="messages">
-        {% for message in messages %}
-        <div class="{{ message.tags }} message">
-            {{ message }}
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
 
 </div>
 {% endblock %}

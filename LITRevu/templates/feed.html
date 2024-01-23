@@ -11,7 +11,8 @@
     </div>
 
     {% for item in feed_items %}
-    <div class="item-frame {% if item.get_model_name == 'Ticket' %}ticket{% elif item.get_model_name == 'Review' %}review{% endif %}">
+    <div class="item-frame {% if item.get_model_name == 'Ticket' %}ticket{% elif item.get_model_name == 'Review' %}review{% endif %}"
+         id="{% if item.get_model_name == 'Review' %}critique-{{ item.id }}{% endif %}">
         <div class="item-header">
             <span class="created-info">
                 Créé par <strong>{{ item.user.username }}</strong>
@@ -36,8 +37,8 @@
                 </div>
             {% else %}
                 <p>Critique déjà réalisée</p>
-                <!-- Lien qui amène à la critique dans le feed, supposons que la critique a un id unique -->
-                <a href="#critique-{{ item.id }}" class="go-to-review">Voir la critique</a>
+                <a href="#critique-{{ item.review.id }}" class="go-to-review">Voir la critique</a>
+
             {% endif %}
         {% endif %} <!-- Fin de la condition pour Ticket -->
 

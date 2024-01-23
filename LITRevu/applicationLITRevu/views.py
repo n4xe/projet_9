@@ -187,32 +187,31 @@ def follow_user(request):
         form = UserFollowForm(request.POST)
         if form.is_valid():
             username_to_follow = form.cleaned_data['username']
-            try:
+            if User.objects.filter(username=username_to_follow).exists():
                 followed_user = User.objects.get(username=username_to_follow)
                 if followed_user != request.user:
-                    # Vérifier si l'utilisateur est déjà suivi
-                    if UserFollows.objects.filter(user=request.user, followed_user=followed_user).exists():
-                        messages.info(request, "Vous êtes déjà abonné à cet utilisateur.")
-                    else:
-                        # Créer l'abonnement si il n'existe pas déjà
+                    if not UserFollows.objects.filter(user=request.user, followed_user=followed_user).exists():
                         UserFollows.objects.create(user=request.user, followed_user=followed_user)
                         messages.success(request, "Vous vous êtes abonné avec succès.")
+                    else:
+                        messages.info(request, "Vous êtes déjà abonné à cet utilisateur.")
                 else:
                     messages.error(request, "Vous ne pouvez pas vous suivre vous-même.")
-            except User.DoesNotExist:
+            else:
                 messages.error(request, "L'utilisateur saisi n'existe pas.")
+        else:
+            messages.error(request, "Il y a une erreur dans le formulaire.")
     else:
         form = UserFollowForm()
-    return render(request, 'follow_user.html', {'form': form})
 
+    return render(request, 'follow_user.html', {'form': form})
 
 @login_required
 def unfollow_user(request, user_id):
     follow = get_object_or_404(UserFollows, user=request.user, followed_user_id=user_id)
-    if request.method == 'POST':
-        follow.delete()
-        return redirect('user_follows')
-    return render(request, 'unfollow_confirm.html', {'follow': follow})
+    messages.success(request, "Utilisateur désuivi avec succès")
+    follow.delete()
+    return redirect('user_follows')
 
 
 @login_required
@@ -242,6 +241,13 @@ def feed(request):
         key=attrgetter('time_created'),
         reverse=True
     )
+
+    ticket_review_mapping = {review.ticket_id: review for review in Review.objects.all()}
+    for item in feed_items:
+        if isinstance(item, Ticket):
+            item.has_review = item.id in ticket_review_mapping
+            if item.has_review:
+                item.review = ticket_review_mapping[item.id]
 
     for item in feed_items:
         if hasattr(item, 'rating'):  # Vérifiez si l'item a un attribut 'rating'
